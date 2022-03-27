@@ -1,4 +1,6 @@
 ﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
+using SeleniumExtras.WaitHelpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,21 +23,23 @@ namespace test_task_for_VS_via_GUI
 
         public bool LogIn(string userName, string email)
         {
-            var paswordBar = driver.FindElement(_EmaildBar);
-            paswordBar.SendKeys(email);
-            Thread.Sleep(1500);//TODO replase by normal waiting
-
+            var EmailBar = driver.FindElement(_EmaildBar);
+            EmailBar.SendKeys(email);
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
+            wait.Until(ExpectedConditions.ElementToBeClickable(_FullNameBar));
+            
             var nameBar = driver.FindElement(_FullNameBar);
             nameBar.SendKeys(userName);
 
             driver.FindElement(_LogInButton).Click();
-            Thread.Sleep(1500);//TODO replase by normal waiting
+            
 
             try
             {
-                By _PopUpText = By.XPath("//div[@class='_1p53U']");
-                var popUpText = driver.FindElement(_PopUpText);
-                return IsElementVisible(_PopUpText);
+                By _Capcha = By.XPath("//div[@class='_1p53U']");
+                wait.Until(ExpectedConditions.ElementExists(_Capcha));
+                var popUpText = driver.FindElement(_Capcha);
+                return IsElementVisible(_Capcha);
             }
             catch
             {
